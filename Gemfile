@@ -37,6 +37,7 @@ group :development, :test do
   gem 'capybara'
   gem 'factory_bot_rails'
   gem 'rails-controller-testing'
+  gem 'ffaker'
 end
 
 group :development do

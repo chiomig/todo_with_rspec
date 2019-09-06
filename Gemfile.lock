@@ -69,6 +69,7 @@ GEM
     factory_bot_rails (4.8.2)
       factory_bot (~> 4.8.2)
       railties (>= 3.0.0)
+    ffaker (2.12.0)
     ffi (1.9.23)
     formatador (0.2.5)
     globalid (0.4.1)
@@ -231,6 +232,7 @@ DEPENDENCIES
   capybara
   coffee-rails (~> 4.2)
   factory_bot_rails
+  ffaker
   guard
   guard-rspec
   jbuilder (~> 2.5)
@@ -250,4 +252,4 @@ DEPENDENCIES
   web-console
 
 BUNDLED WITH
-   1.14.6
+   2.0.2
