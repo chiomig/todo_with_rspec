@@ -2,6 +2,7 @@ require 'rails_helper'
 
 RSpec.describe User, type: :model do
   let(:user) { build(:user) }
+  let(:user_with_tasks) { build(:user_with_tasks) }
 
   it 'has a valid factory' do
     expect(user).to be_valid
@@ -35,13 +36,13 @@ RSpec.describe User, type: :model do
   end
 
   it 'has two tasks' do
-    expect(user.tasks.length).to eq(2)
+    expect(user_with_tasks.tasks.length).to eq(2)
   end
 
   it 'returns tasks due today' do
-    task = user.tasks.first
+    task = user_with_tasks.tasks.first
     task.update(due_date: DateTime.now)
-    expect(user.due_today.length).to eq(2)
+    expect(user_with_tasks.due_today.length).to eq(2)
   end
 
 end

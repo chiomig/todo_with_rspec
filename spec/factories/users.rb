@@ -4,10 +4,15 @@ FactoryBot.define do
     lastname  { FFaker::Name.last_name }
     email  { FFaker::Internet.email }
 
-    after(:build) do |user|
-      [:email, :homework].each do |task|
-        user.tasks << FactoryBot.build(task, user: user)
+    factory :user_with_tasks do
+
+      after(:build) do |user|
+        [:email, :homework].each do |task|
+          user.tasks << FactoryBot.build(task, user: user)
+        end
       end
+
     end
+
   end
 end

@@ -1,0 +1,14 @@
+<%= form_for(@task, local: true) do |form| %>
+  
+  <div>
+    
+    <%= form.label :name %>
+    <%= form.text_field :name, id: :task_name %>
+
+    <%= form.label :priority%>
+    <%= form.text_field :priority, id: :task_priority%>
+    <%= form.submit %>
+  </div>
+
+
+<% end %>

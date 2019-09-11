@@ -5,122 +5,167 @@ RSpec.describe TasksController, type: :controller do
   let(:invalid_attributes) { attributes_for(:invalid_task) }
 
   describe "GET #index" do
-    it "assigns all tasks as @tasks" do
-      task = Task.create!(valid_attributes)
+    #it "assigns all tasks as @tasks" do
+    #  task = Task.create!(valid_attributes)
+    #  get :index
+    #  expect(assigns(:tasks)).to eq([task])
+    #end
+
+    it 'renders the index template' do
       get :index
-      expect(assigns(:tasks)).to eq([task])
+      expect(response).to render_template(:index)
+    end
+
+    it 'returns all tasks for user' do
+      user = create(:user)
+
+      get :index
+
+      expect(assigns(:tasks)).not_to be_nil
     end
   end
 
   describe "GET #show" do
+    #it "assigns the requested task as @task" do
+    #  task = Task.create! valid_attributes
+    #  get :show, params: {id: task.to_param}
+    #  expect(assigns(:task)).to eq(task)
+    #end
+
     it "assigns the requested task as @task" do
-      task = Task.create! valid_attributes
+      task = create(:homework)
+
+
       get :show, params: {id: task.to_param}
+
       expect(assigns(:task)).to eq(task)
+    end
+
+    it "renders the :show template" do
+      task = create(:email)
+      get :show, params: { id: task.to_param }
+
+      expect(response).to render_template :show
     end
   end
 
   describe "GET #new" do
-    it "assigns a new task as @task" do
-      get :new, params: {}
+    #it "assigns a new task as @task" do
+    #  get :new, params: {}
+    #  expect(assigns(:task)).to be_a_new(Task)
+    #end
+
+    it 'renders the new template' do
+      get :new
+      expect(response).to render_template(:new)
+    end
+
+    it "assigns a new task to @task" do
+      get :new
       expect(assigns(:task)).to be_a_new(Task)
     end
   end
 
-  describe "GET #edit" do
+  describe 'GET #edit' do
     it "assigns the requested task as @task" do
-      task = Task.create! valid_attributes
+      task = create(:homework)
+
       get :edit, params: {id: task.to_param}
+
       expect(assigns(:task)).to eq(task)
+    end
+
+    it "renders the :edit template" do
+      task = create(:email)
+      get :edit, params: { id: task.to_param }
+      expect(response).to render_template :edit
     end
   end
 
   describe "POST #create" do
-    context "with valid params" do
-      it "creates a new Task" do
-        expect {
+    let(:user) {create(:user)}
+    let(:valid_attributes) { attributes_for(:email, user_id: user.id) }
+    let(:invalid_attributes) { attributes_for(:invalid_task)}
+
+    context "with valid attributes" do
+      it 'persists new task' do
+        expect{
           post :create, params: {task: valid_attributes}
         }.to change(Task, :count).by(1)
       end
 
-      it "assigns a newly created task as @task" do
-        post :create, params: {task: valid_attributes}
-        expect(assigns(:task)).to be_a(Task)
-        expect(assigns(:task)).to be_persisted
-      end
-
-      it "redirects to the created task" do
-        post :create, params: {task: valid_attributes}
-        expect(response).to redirect_to(Task.last)
+      it 'redirects to show page' do
+        post :create, params: { task: valid_attributes }
+        expect(response).to redirect_to(assigns(:task))
       end
     end
 
-    context "with invalid params" do
-      it "assigns a newly created but unsaved task as @task" do
-        post :create, params: {task: invalid_attributes}
-        expect(assigns(:task)).to be_a_new(Task)
+    context 'with invalid attributes' do
+
+      it 'does not persist task' do
+        expect{
+          post :create, params: {task: invalid_attributes}
+        }.not_to change(Task, :count)
       end
 
-      it "re-renders the 'new' template" do
+      it 're-renders :new template' do
         post :create, params: {task: invalid_attributes}
-        expect(response).to render_template("new")
+        expect(response).to render_template(:new)
       end
+
     end
   end
 
-  describe "PUT #update" do
-    context "with valid params" do
-      let(:new_attributes) {attributes_for(:task)}
+  describe '#PATCH #update' do
+    let(:task) { create(:homework) }
+    let(:new_attributes) { attributes_for(:homework) }
+    let(:invalid_attributes) { attributes_for(:invalid_task)}
 
-      it "updates the requested task" do
-        task = Task.create! valid_attributes
-        put :update, params: {id: task.to_param, task: new_attributes}
+    context 'with valid params' do
+      it 'updates the selected task' do
+        patch :update, params: { id: task.to_param, task: new_attributes }
+
         task.reload
-        expect(task.name).to eq("buy beer")
-        expect(task.priority).to eq(2)
+
+        expect(task.name).to eq('complete homework')
+        expect(task.priority).to eq(1)
       end
 
-      it "assigns the requested task as @task" do
-        task = Task.create! valid_attributes
-        put :update, params: {id: task.to_param, task: valid_attributes}
-        expect(assigns(:task)).to eq(task)
-      end
+      it 'redirects to the task' do
+        patch :update, params: { id: task.to_param, task: new_attributes }
+        task.reload
 
-      it "redirects to the task" do
-        task = Task.create! valid_attributes
-        put :update, params: {id: task.to_param, task: valid_attributes}
         expect(response).to redirect_to(task)
       end
     end
 
-    context "with invalid params" do
-      it "assigns the task as @task" do
-        task = Task.create! valid_attributes
-        put :update, params: {id: task.to_param, task: invalid_attributes}
+    context 'with invalid params' do
+      it 'does not update the task' do
+        patch :update, params: {id: task.to_param, task: invalid_attributes}
         expect(assigns(:task)).to eq(task)
       end
 
-      it "re-renders the 'edit' template" do
-        task = Task.create! valid_attributes
-        put :update, params: {id: task.to_param, task: invalid_attributes}
-        expect(response).to render_template("edit")
+      it 're-renders the edit template' do
+        patch :update, params: {id: task.to_param, task: invalid_attributes}
+        expect(response).to render_template(:edit)
       end
     end
   end
 
   describe "DELETE #destroy" do
+    let(:task) {build(:homework)}
+
     it "destroys the requested task" do
-      task = Task.create! valid_attributes
+      task.save
       expect {
         delete :destroy, params: {id: task.to_param}
       }.to change(Task, :count).by(-1)
     end
 
     it "redirects to the tasks list" do
-      task = Task.create! valid_attributes
+      task.save
       delete :destroy, params: {id: task.to_param}
-      expect(response).to redirect_to(tasks_url)
+      expect(response).to redirect_to(tasks_path)
     end
   end
-
 end

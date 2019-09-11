@@ -15,7 +15,7 @@ FactoryBot.define do
     factory :invalid_task do
       association :user
       name nil
-      due_date
+      due_date nil
       priority nil
     end
   end
