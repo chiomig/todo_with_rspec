@@ -4,6 +4,17 @@ RSpec.describe TasksController, type: :controller do
   let(:valid_attributes) {attributes_for(:vote)}
   let(:invalid_attributes) { attributes_for(:invalid_task) }
 
+  before { sign_in(create(:user)) }
+
+  describe "unauthenticated" do
+    it 'redirects user to login page when not signed in' do
+      sign_out(:user)
+      get :index
+      expect(response).to redirect_to(new_user_session_path)
+    end
+  end
+
+
   describe "GET #index" do
     #it "assigns all tasks as @tasks" do
     #  task = Task.create!(valid_attributes)

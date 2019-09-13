@@ -7,6 +7,7 @@ require 'spec_helper'
 require 'rspec/rails'
 require 'capybara/rspec'
 require 'support/database_cleaner'
+require 'devise'
 
 
 # Add additional requires below this line. Rails is not loaded until this point!
@@ -36,6 +37,9 @@ RSpec.configure do |config|
 
   config.include FactoryBot::Syntax::Methods
   FactoryBot.definition_file_paths = [File.expand_path('../factories', __FILE__)]
+
+  config.include Devise::Test::ControllerHelpers, :type => :controller
+  config.include Devise::Test::IntegrationHelpers, type: :feature
 
   config.infer_spec_type_from_file_location!
 

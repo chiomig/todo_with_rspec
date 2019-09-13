@@ -2,6 +2,8 @@ require 'rails_helper'
 
 feature "tasks/index" do
   scenario "renders a list of tasks" do
+    user = create(:user)
+    sign_in(user)
     create(:homework)
     create(:email)
 
@@ -14,6 +16,8 @@ end
 
   feature 'New Task' do
     scenario 'user adds a new task' do
+      user = create(:user)
+      sign_in(user)
 
       visit tasks_path
 
@@ -21,6 +25,8 @@ end
         click_link 'New Task'
         fill_in 'Name', with: 'Learn Rspec'
         fill_in 'Priority', with: 1
+        fill_in 'Due date', with: DateTime.now
+        select(user.email, from: 'task_user_id')
         click_button('Create Task')
       }.to change(Task, :count).by(1)
 
@@ -31,21 +37,23 @@ end
   end
 
   feature 'Edit Task' do
-     before :each do
-       @task = create(:task)
-     end
+    let(:user) { create(:user) }
+    let(:task) { create(:homework) }
 
     scenario 'User edits task' do
-      visit task_path(@task)
-      expect(page).to have_content('buy beer')
+      sign_in(user)
+      visit task_path(task)
+      expect(page).to have_content('complete homework')
 
       click_link("Edit")
 
       fill_in 'Name', with: 'Learn Rspec'
       fill_in "Priority", with: 1
+      fill_in "Due date", with: DateTime.now
+      select(task.user.email, from: 'task_user_id')
       click_button('Update Task')
 
-      expect(current_path).to eq(task_path(@task.id))
+      expect(current_path).to eq(task_path(task.id))
 
       expect(page).to have_content('Learn Rspec')
     end
